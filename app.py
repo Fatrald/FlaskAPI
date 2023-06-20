@@ -1,6 +1,5 @@
 from config import app
-from routes.users import users_bp
-from routes.utils import error_bp
+from routes.usersRoute import users_bp
 
 app.register_blueprint(users_bp)
 
