@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from config import app, db
-from models import Users, Trx, TrxItem
+from models import Users, Trx, TrxItem, Elektronik
 from datetime import datetime
 import uuid
 
@@ -135,66 +135,36 @@ def getUserByUUID(uuid):
             'message':str(e)
         })
 
-
-
-# @app.route('/users/<int:id_card>', methods=['PUT'])
-# def updateUser(id_card):
-#     try:
-#         data = request.get_json()
-#         user = UserModel.query.filter_by(id_card=id_card).first()
-#         validate_user_email = UserModel.query.filter_by(email=data.get('email')).first()
-#         if not user:
-#             return jsonify({
-#                 'result': 'error',
-#                 'message': 'User Not Found'
-#             })
-    
-#         if validate_user_email:
-#             return jsonify({
-#                 'result': 'error',
-#                 'message': 'Email Already Exists'
-#             })
-#         user.name = data.get('name', user.name)
-#         user.email = data.get('email', user.email)
-#         user.set_password(data.get('password', user.password))
-#         user.telp = data.get('telp', user.telp)
-#         user.company = data.get('company', user.company)
-#         db.session.commit()
-#         return jsonify({
-#             'result': 'success',
-#             'message': 'User Updated Successfully'
-#         })
-#     except Exception as e:
-#         return jsonify({
-#             'result': 'error',
-#             'message': str(e)
-#         })
-
-# @app.route('/login', methods=['POST'])
-# def loginUser():
-#     data = request.get_json()
-#     user = UserModel.query.filter_by(email=data.get('email')).first()
-#     passwordCheck = user.check_password(data.get('password'))
-#     if not passwordCheck:
-#         return jsonify({
-#             'result':'error',
-#             'message':'Wrong Password'
-#         })
-#     elif user:
-#         return jsonify({
-#             'result':'error',
-#             'message':'Email doesn`t found'
-#         })
-#     else:
-#         return jsonify({
-#             'result':'success',
-#             'message':'Login Successfuly'
-#         })
-
-
-
-
-
-
-
-
+@app.route('/users/<string:uuid>', methods=['PUT'])
+def updateUserByUUID(uuid):
+    try:
+        data = request.get_json()
+        user = Users.query.filter_by(uuid_user=uuid).first()
+        validate_user_email = Users.query.filter_by(email = data.get('email')).first()
+        if not user:
+            return jsonify({
+                'result':'failed',
+                'message':'user not found'
+            })
+        
+        elif validate_user_email:
+            return jsonify({
+                'result':'failed',
+                'message':'email already exists'
+            })
+        else:
+            user.nama = data.get('nama', user.nama)
+            user.alamat = data.get('alamat', user.alamat)
+            user.email = data.get('email', user.email)
+            user.no_telp = data.get('no_telp', user.no_telp)
+            user.jml_point = data.get('jml_point',user.jml_point)
+            db.session.commit()
+            return jsonify({
+                'result':'success',
+                'message':'user updated successfully'
+            })
+    except Exception as e:
+        return jsonify({
+            'result':'error',
+            'message':str(e)
+        })
